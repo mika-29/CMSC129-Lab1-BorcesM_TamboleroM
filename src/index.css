@@ -66,3 +66,111 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* Reset default dark input styles */
+input, select {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+  border: 1px solid #D1D5DB !important;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+  width: 100%;
+  outline: none;
+  transition: all 0.15s ease;
+}
+
+input:focus, select:focus {
+  border-color: #f28fed;
+  box-shadow: 0 0 0 3px rgba(242, 143, 237, 0.25);
+}
+
+/* Overlay */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(17, 24, 39, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  z-index: 1000;
+}
+
+/* Modal box */
+.modal-box {
+  background: #ffffff;
+  padding: 20px 22px;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 230px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.18);
+  transform: scale(1.2);
+}
+
+/* Title */
+.modal-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #111827;
+}
+
+/* Form spacing */
+.form-group {
+  margin-bottom: 14px;
+}
+
+.form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #374151;
+}
+
+/* Inputs */
+.form-input {
+  width: 200px;
+  height: 20px;
+  border-radius: 10px;
+  border: 1px solid #D1D5DB;
+  background: #ffffff;
+  color: #111827;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-input:focus {
+  border-color: #f28fed;
+  box-shadow: 0 0 0 3px rgba(242, 143, 237, 0.25);
+}
+
+/* Buttons */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #F3F4F6;
+}
+
+.btn {
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-secondary {
+  background: #111827;
+  color: white;
+}
+
+.btn-primary {
+  background: #f28fed;
+  color: white;
+}

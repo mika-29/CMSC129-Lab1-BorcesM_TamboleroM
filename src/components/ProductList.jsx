@@ -125,25 +125,62 @@ const handleDelete = async (id) => {
       </table>
 
       {showModal && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(84, 79, 79, 0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
-          <div style={{ backgroundColor: 'white', padding: '30px', borderRadius: '12px', width: '400px' }}>
-            <h3 style={{ marginBottom: '20px', color: '#1A1A1A' }}>Add New Product</h3>
+        <div className="modal-overlay">
+          <div className="modal-box">
+            <h3 className="modal-title">Add New Product</h3>
+
             <form onSubmit={handleAddProduct}>
-              <div style={{ marginBottom: '15px' }}>
-                <label style={{ display: 'block', fontSize: '14px', color: '#1A1A1A' }}>Product Name</label>
-                <input required type="text" value={newProduct.name} onChange={(e) => setNewProduct({...newProduct, name: e.target.value})} style={{ width: '100%', padding: '8px' }} />
+              <div className="form-group">
+                <label className="form-label">Product Name</label>
+                <input
+                  className="form-input"
+                  required
+                  type="text"
+                  value={newProduct.name}
+                  onChange={(e) =>
+                    setNewProduct({ ...newProduct, name: e.target.value })
+                  }
+                />
               </div>
-              <div style={{ marginBottom: '15px' }}>
-                <label style={{ display: 'block', fontSize: '14px', color: '#1A1A1A' }}>Category</label>
-                <input required type="text" value={newProduct.category} onChange={(e) => setNewProduct({...newProduct, category: e.target.value})} style={{ width: '100%', padding: '8px' }} />
+
+              <div className="form-group">
+                <label className="form-label">Category</label>
+                <input
+                  className="form-input"
+                  required
+                  type="text"
+                  value={newProduct.category}
+                  onChange={(e) =>
+                    setNewProduct({ ...newProduct, category: e.target.value })
+                  }
+                />
               </div>
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{ display: 'block', fontSize: '14px', color: '#1A1A1A' }}>Quantity</label>
-                <input required type="number" value={newProduct.quantity} onChange={(e) => setNewProduct({...newProduct, quantity: e.target.value})} style={{ width: '100%', padding: '8px' }} />
+
+              <div className="form-group">
+                <label className="form-label">Quantity</label>
+                <input
+                  className="form-input"
+                  required
+                  type="number"
+                  value={newProduct.quantity}
+                  onChange={(e) =>
+                    setNewProduct({ ...newProduct, quantity: e.target.value })
+                  }
+                />
               </div>
-              <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-                <button type="button" onClick={() => setShowModal(false)}>Cancel</button>
-                <button type="submit" style={{ backgroundColor: '#f28fed', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '4px' }}>Save</button>
+
+              <div className="modal-actions">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setShowModal(false)}
+                >
+                  Cancel
+                </button>
+
+                <button type="submit" className="btn btn-primary">
+                  Save
+                </button>
               </div>
             </form>
           </div>
