@@ -174,3 +174,10 @@ input:focus, select:focus {
   background: #f28fed;
   color: white;
 }
+.form-inputDropdown {
+  width: 98%;
+  height: 45px;
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px solid #D1D5DB;
+}
