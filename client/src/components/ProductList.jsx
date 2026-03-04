@@ -20,6 +20,10 @@ const ProductList = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
+  const [toast, setToast] = useState({ show: false,message: "", lastItem: null });
+
   const loadProducts = async () => {
     setLoading(true);
     setError("");
@@ -37,6 +41,46 @@ const ProductList = () => {
   useEffect(() => {
     loadProducts();
   }, []);
+
+  const confirmDelete = (item) => {
+    setItemToDelete(item);
+    setShowDeleteConfirm(true);
+  };
+
+  const handleExecuteDelete = async () => {
+    if (!itemToDelete) return;
+    try{
+      await deleteItem(itemToDelete.id);
+
+      setToast({
+        show:true,
+        message: `${itemToDelete.name} deleted successfully!`,
+        lastItem: itemToDelete,
+      });
+
+      setTimeout(() => 
+        setToast({ show: false, message: "", lastItem: null }), 5000);
+
+      setShowDeleteConfirm(false);
+      setItemToDelete(null);
+      await loadProducts();
+    } catch (err) {
+      alert("Delete failed: " + err.message); 
+    }
+  }; 
+
+  const handleUndo = async () => {
+    if (toast.lastItem) {
+      try {
+        const {name, category, quantity} = toast.lastItem;
+        await createItem({ name, category, quantity });
+        setToast({ show: false, message: "", lastItem: null });
+        await loadProducts();
+      } catch (err) {
+        alert("Undo failed: " + err.message);
+      }
+    }
+  }; 
 
   const handleSaveProduct = async (e) => {
     e.preventDefault();
@@ -83,19 +127,6 @@ const ProductList = () => {
     } catch (err) {
       console.error(err);
       alert(err?.response?.data?.error || err.message);
-    }
-  };
-
-  const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this product?")) {
-      try {
-        // DELETE /api/items/:id
-        await deleteItem(id);
-        await loadProducts();
-      } catch (err) {
-        console.error(err);
-        alert(err?.response?.data?.error || err.message);
-      }
     }
   };
 
@@ -173,7 +204,6 @@ const ProductList = () => {
                         fontSize: "12px",
                       }}
                     >
-                      {/* If your backend stores quantity as a number, show it like this: */}
                       {item.quantity ?? 0} in stock
                     </span>
                   </td>
@@ -203,7 +233,7 @@ const ProductList = () => {
                     </button>
 
                     <button
-                      onClick={() => handleDelete(item.id)}
+                      onClick={() => confirmDelete(item)}
                       style={{
                         background: "none",
                         border: "none",
@@ -219,6 +249,33 @@ const ProductList = () => {
             )}
           </tbody>
         </table>
+      )}
+
+      {/* --- DELETE CONFIRMATION MODAL --- */}
+      {showDeleteConfirm && (
+        <div className="modal-overlay">
+          <div className="modal-box" style={{ textAlign: "center" }}>
+            <h3 style={{ color: "#D32F2F", marginBottom: "8px", fontSize: "20px" }}>Are you sure?</h3>
+            <p style={{ color: "#4B5563", fontSize: "16px" }}>Do you really want to delete <strong>{itemToDelete?.name}</strong>?</p>
+            <div className="modal-actions" style={{ marginTop: "20px" }}>
+              <button className="btn btn-secondary" onClick={() => setShowDeleteConfirm(false)}>Cancel</button>
+              <button className="btn" style={{ backgroundColor: "#EF4444", color: "white" }} onClick={handleExecuteDelete}>Yes, Delete</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* --- UNDO TOAST --- */}
+      {toast.show && (
+        <div style={{
+          position: "fixed", bottom: "20px", left: "50%", transform: "translateX(-50%)",
+          backgroundColor: "#333", color: "white", padding: "12px 24px", borderRadius: "8px",
+          display: "flex", alignItems: "center", gap: "15px", boxShadow: "0 4px 12px rgba(0,0,0,0.15)", zIndex: 1000
+        }}>
+          <span>{toast.message}</span>
+          <button onClick={handleUndo} style={{ color: "#ee76d6", background: "none", border: "none", fontWeight: "bold", cursor: "pointer" }}>UNDO</button>
+          <button onClick={() => setToast({ ...toast, show: false })} style={{ color: "white", background: "none", border: "none", cursor: "pointer" }}>✕</button>
+        </div>
       )}
 
       {showModal && (
