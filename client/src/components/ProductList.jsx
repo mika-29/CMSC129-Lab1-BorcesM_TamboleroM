@@ -18,6 +18,8 @@ const ProductList = () => {
   const [editId, setEditId] = useState(null);
 
   const [loading, setLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false); 
+  const [saveLoading, setSaveLoading] = useState(false); 
   const [error, setError] = useState("");
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -50,6 +52,7 @@ const ProductList = () => {
   const handleExecuteDelete = async () => {
     if (!itemToDelete) return;
     try{
+      setDeleteLoading(true); 
       await deleteItem(itemToDelete.id);
 
       setToast({
@@ -66,6 +69,8 @@ const ProductList = () => {
       await loadProducts();
     } catch (err) {
       alert("Delete failed: " + err.message); 
+    }finally{
+      setDeleteLoading(false); 
     }
   }; 
 
@@ -106,6 +111,8 @@ const ProductList = () => {
     }
 
     try {
+      setSaveLoading(true);
+
       const payload = { name, category, quantity: quantityNum };
 
       if(isEditing && editId) {
@@ -127,6 +134,8 @@ const ProductList = () => {
     } catch (err) {
       console.error(err);
       alert(err?.response?.data?.error || err.message);
+    } finally {
+      setSaveLoading(false); 
     }
   };
 
@@ -166,9 +175,11 @@ const ProductList = () => {
         </p>
       )}
 
-      {loading ? (
-        <p>Loading…</p>
-      ) : (
+      {loading && (
+        <p style={{ marginBottom: "10px", color: "#6B7280" }}>
+          Fetching Products... 
+        </p>
+        )} (
         <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
           <thead>
             <tr style={{ color: "#9CA3AF", borderBottom: "1px solid #E5E7EB" }}>
@@ -249,7 +260,7 @@ const ProductList = () => {
             )}
           </tbody>
         </table>
-      )}
+      )
 
       {/* --- DELETE CONFIRMATION MODAL --- */}
       {showDeleteConfirm && (
@@ -259,7 +270,9 @@ const ProductList = () => {
             <p style={{ color: "#4B5563", fontSize: "16px" }}>Do you really want to delete <strong>{itemToDelete?.name}</strong>?</p>
             <div className="modal-actions" style={{ marginTop: "20px" }}>
               <button className="btn btn-secondary" onClick={() => setShowDeleteConfirm(false)}>Cancel</button>
-              <button className="btn" style={{ backgroundColor: "#EF4444", color: "white" }} onClick={handleExecuteDelete}>Yes, Delete</button>
+              <button className="btn" style={{ backgroundColor: "#EF4444", color: "white" }} onClick={handleExecuteDelete} disabled={deleteLoading}>
+                {deleteLoading ? "Deleting..." : "Yes, Delete"}
+              </button>
             </div>
           </div>
         </div>
