@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { db, admin } = require("../config/firebase");
+const validateItem = require("../middleware/validateItem");
 
 // Collection name
 const COL = "items";
@@ -10,22 +11,13 @@ const COL = "items";
  * POST /api/items
  * body: { name, quantity, category?}
  */
-router.post("/", async (req, res) => {
+router.post("/", validateItem, async (req, res, next) => {
   try {
     const { name, quantity, category = ""} = req.body;
 
-    // basic validation
-    if (!name || typeof name !== "string") {
-      return res.status(400).json({ error: "name is required (string)" });
-    }
-    const qtyNum = Number(quantity);
-    if (Number.isNaN(qtyNum) || qtyNum < 0) {
-      return res.status(400).json({ error: "quantity must be a non-negative number" });
-    }
-
     const docRef = await db.collection(COL).add({
       name: name.trim(),
-      quantity: qtyNum,
+      quantity: quantity,
       category: String(category || "").trim(),
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
@@ -34,7 +26,7 @@ router.post("/", async (req, res) => {
 
     return res.status(201).json({ id: docRef.id });
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    next(err)
   }
 });
 
@@ -42,7 +34,7 @@ router.post("/", async (req, res) => {
  * READ ALL (non-deleted)
  * GET /api/items
  */
-router.get("/", async (req, res) => {
+router.get("/", async (req, res, next) => {
     console.log("Express route /api/items was called");
   try {
     const snap = await db
@@ -59,7 +51,7 @@ router.get("/", async (req, res) => {
     return res.json(items);
   } catch (err) {
     // If orderBy + where causes index error, Firestore will tell you a link to create the index.
-    return res.status(500).json({ error: err.message });
+    next(err);
   }
 });
 
@@ -67,7 +59,7 @@ router.get("/", async (req, res) => {
  * READ ONE
  * GET /api/items/:id
  */
-router.get("/:id", async (req, res) => {
+router.get("/:id", async (req, res, next) => {
   try {
     const docRef = db.collection(COL).doc(req.params.id);
     const docSnap = await docRef.get();
@@ -83,7 +75,7 @@ router.get("/:id", async (req, res) => {
 
     return res.json({ id: docSnap.id, ...data });
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    next(err);
   }
 });
 
@@ -92,7 +84,7 @@ router.get("/:id", async (req, res) => {
  * PUT /api/items/:id
  * body: any fields to update (name, quantity, category)
  */
-router.put("/:id", async (req, res) => {
+router.put("/:id", async (req, res, next) => {
   try {
     const docRef = db.collection(COL).doc(req.params.id);
     const docSnap = await docRef.get();
@@ -117,7 +109,7 @@ router.put("/:id", async (req, res) => {
     await docRef.update(updates);
     return res.json({ ok: true });
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    next(err);
   }
 });
 
@@ -126,7 +118,7 @@ router.put("/:id", async (req, res) => {
  * DELETE /api/items/:id
  * This will set deletedAt timestamp instead of actually deleting the document.
  */
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", async (req, res, next) => {
   try {
     const docRef = db.collection(COL).doc(req.params.id);
     const exists = await docRef.get();
@@ -139,7 +131,7 @@ router.delete("/:id", async (req, res) => {
 
     return res.json({ ok: true, deleted: "soft" });
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    next(err);
   }
 });
 
@@ -148,7 +140,7 @@ router.delete("/:id", async (req, res) => {
  * DELETE /api/items/:id/hard
  * This will permanently delete the document from Firestore.
  */
-router.delete("/:id/hard", async (req, res) => {
+router.delete("/:id/hard", async (req, res, next) => {
   try {
     const docRef = db.collection(COL).doc(req.params.id);
     const exists = await docRef.get();
@@ -157,7 +149,7 @@ router.delete("/:id/hard", async (req, res) => {
     await docRef.delete();
     return res.json({ ok: true, deleted: "hard" });
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    next(err);
   }
 });
 

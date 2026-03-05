@@ -181,3 +181,15 @@ input:focus, select:focus {
   border-radius: 10px;
   border: 1px solid #D1D5DB;
 }
+
+.loading-dots::after {
+  content: "";
+  animation: dots 1.5s steps(4, end) infinite;
+}
+
+@keyframes dots {
+  0% { content: ""; }
+  25% { content: "."; }
+  50% { content: ".."; }
+  75% { content: "..."; }
+}
