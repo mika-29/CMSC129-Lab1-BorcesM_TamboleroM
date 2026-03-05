@@ -1,4 +1,3 @@
-// src/components/ProductList.jsx
 import React, { useState, useEffect } from "react";
 import { getItems, createItem, deleteItem, updateItem } from "../api/itemsApi";
 
@@ -175,70 +174,69 @@ const ProductList = () => {
         </p>
       )}
 
-      {loading && (
-        <p style={{ marginBottom: "10px", color: "#6B7280" }}>
-          Fetching Products... 
-        </p>
-        )} (
-        <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
-          <thead>
-            <tr style={{ color: "#9CA3AF", borderBottom: "1px solid #E5E7EB" }}>
-              <th style={{ padding: "12px" }}>Name of product</th>
-              <th>Quantity</th>
-              <th>Category</th>
-              <th style={{ textAlign: "right" }}>Actions</th>
+
+      <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+        <thead>
+          <tr style={{ color: "#9CA3AF", borderBottom: "1px solid #a5a5a5" }}>
+            <th style={{ padding: "12px" }}>Name of product</th>
+            <th>Quantity</th>
+            <th>Category</th>
+            <th style={{ textAlign: "right" }}>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {loading ? (
+            <tr>
+              <td colSpan={4} style={{ padding: "15px", textAlign: "center", color: "#6B7280" }}>
+                Fetching products<span className="loading-dots"></span>
+              </td>
             </tr>
-          </thead>
+          ) : products.length === 0 ? (
+            <tr>
+              <td colSpan={4} style={{ padding: "15px", textAlign: "center", color: "#6B7280" }}>
+                No products yet.
+              </td>
+            </tr>
+          ) : (
+            products.map((item) => (
+              <tr key={item.id} style={{ borderBottom: "1px solid #c7c7c7",color:"#1A1A1A" }}>
+                <td style={{ padding: "15px 12px" }}>{item.name}</td>
 
-          <tbody>
-            {products.length === 0 ? (
-              <tr>
-                <td colSpan={4} style={{ padding: "15px 12px", color: "#6B7280" }}>
-                  No products yet.
+                <td>
+                  <span
+                    style={{
+                      backgroundColor: "#EDE9FE",
+                      color: "#6F2CF3",
+                      padding: "4px 12px",
+                      borderRadius: "12px",
+                      fontSize: "12px",
+                    }}
+                  >
+                    {item.quantity ?? 0} in stock
+                  </span>
                 </td>
-              </tr>
-            ) : (
-              products.map((item) => (
-                <tr
-                  key={item.id}
-                  style={{ borderBottom: "1px solid #F3F4F6", color: "#1A1A1A" }}
-                >
-                  <td style={{ padding: "15px 12px" }}>{item.name}</td>
 
-                  <td>
-                    <span
-                      style={{
-                        backgroundColor: "#EDE9FE",
-                        color: "#6F2CF3",
-                        padding: "4px 12px",
-                        borderRadius: "12px",
-                        fontSize: "12px",
-                      }}
-                    >
-                      {item.quantity ?? 0} in stock
-                    </span>
-                  </td>
+                <td>{item.category || "-"}</td>
 
-                  <td>{item.category || "-"}</td>
-
-                  <td style={{ textAlign: "right" }}>
-                    <button
-                      style={{
-                        marginRight: "10px",
-                        background: "none",
-                        border: "none",
-                        color: "#6F2CF3",
-                        cursor: "pointer",
-                      }}
-                      onClick={() => {
-                        setIsEditing(true);
-                        setEditId(item.id);
-                        setNewProduct({
-                          name: item.name,
-                          quantity: item.quantity,
-                          category: item.category,
-                        });
-                        setShowModal(true);
+                <td style={{ textAlign: "right" }}>
+                  <button
+                    style={{
+                      marginRight: "10px",
+                      background: "none",
+                      border: "none",
+                      color: "#6F2CF3",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => {
+                      setIsEditing(true);
+                      setEditId(item.id);
+                      setNewProduct({
+                        name: item.name,
+                        quantity: item.quantity,
+                        category: item.category,
+                      });
+                      setShowModal(true);
                       }}>
                       Edit
                     </button>
@@ -260,7 +258,6 @@ const ProductList = () => {
             )}
           </tbody>
         </table>
-      )
 
       {/* --- DELETE CONFIRMATION MODAL --- */}
       {showDeleteConfirm && (

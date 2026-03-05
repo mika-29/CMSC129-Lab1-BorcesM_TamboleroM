@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
+const errorHandler = require("./middleware/errorHandler");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -26,9 +27,12 @@ app.get("/api/test-firestore", async (req, res) => {
     });
     res.json({ ok: true, id: snap.id });
   } catch (err) {
-    res.status(500).json({ ok: false, error: err.message });
+    next(err);
   }
 });
+
+//Error Handling
+app.use(errorHandler);
 
 // Start server
 app.listen(PORT, () => {
